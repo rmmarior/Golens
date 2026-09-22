@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Golens — Ropa deportiva</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+    --bg:#F6F1E7; --surface:#FFFFFF; --surface-2:#EFE8D6; --tile-1:#EFE7D6; --tile-2:#E7E0CE; --tile-3:#E3DED0; --tile-4:#EAE2CF;
+    --text:#211E19; --muted:#746B5C; --border:#E1D8C2;
+    --accent:#A9761D; --accent-strong:#7A5613; --accent-soft:#F0E2BE; --on-accent:#FFFCF4;
+    --secondary:#3F4B3B; --danger:#9C3B3B;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top:calc(76px + env(safe-area-inset-top,0px)); scroll-behavior:smooth;}
+  html,body{height:100%;}
+  body{background:var(--bg); color:var(--text); font-family:'Inter',ui-sans-serif,system-ui,sans-serif;}
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#15140F; --surface:#1C1A14; --surface-2:#242019; --tile-1:#241F16; --tile-2:#251F17; --tile-3:#221E17; --tile-4:#231F18;
+      --text:#ECE6D6; --muted:#A79D8A; --border:#332E20;
+      --accent:#D9B24C; --accent-strong:#EAC96A; --accent-soft:#2C2411; --on-accent:#1B1607;
+      --secondary:#8AA085; --danger:#C1584A;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#15140F; --surface:#1C1A14; --surface-2:#242019; --tile-1:#241F16; --tile-2:#251F17; --tile-3:#221E17; --tile-4:#231F18;
+    --text:#ECE6D6; --muted:#A79D8A; --border:#332E20;
+    --accent:#D9B24C; --accent-strong:#EAC96A; --accent-soft:#2C2411; --on-accent:#1B1607;
+    --secondary:#8AA085; --danger:#C1584A;
+  }
+  .font-display{font-family:'Fraunces',serif;}
+  .hairline{border-color:var(--border);}
+  ::selection{background:var(--accent-soft); color:var(--accent-strong);}
+  ::-webkit-scrollbar{width:10px; height:10px;}
+  ::-webkit-scrollbar-thumb{background:var(--border); border-radius:6px;}
+
+  .site-header{position:sticky; top:0; z-index:40; padding-top:env(safe-area-inset-top,0px); background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(10px);}
+  .icon-btn{display:inline-flex; align-items:center; justify-content:center; width:2.5rem; height:2.5rem; border-radius:999px; color:var(--text); transition:background-color .18s ease;}
+  .icon-btn:hover{background:var(--surface-2);}
+  .pill{border:1px solid var(--border); border-radius:999px; padding:.4rem 1rem; font-size:.8rem; color:var(--muted); transition:all .18s ease; white-space:nowrap;}
+  .pill[aria-pressed="true"]{background:var(--text); color:var(--bg); border-color:var(--text);}
+  .pill:not([aria-pressed="true"]):hover{border-color:var(--text); color:var(--text);}
+
+  .btn-primary{background:var(--text); color:var(--bg); border-radius:.4rem; padding:.75rem 1.4rem; font-weight:600; font-size:.875rem; transition:opacity .18s ease, transform .18s ease;}
+  .btn-primary:hover{opacity:.85;}
+  .btn-primary:active{transform:scale(.98);}
+  .btn-outline{border:1px solid var(--text); color:var(--text); border-radius:.4rem; padding:.7rem 1.35rem; font-weight:600; font-size:.875rem; transition:all .18s ease;}
+  .btn-outline:hover{background:var(--text); color:var(--bg);}
+
+  .product-card{border:1px solid var(--border); background:var(--surface); transition:border-color .2s ease, transform .2s ease;}
+  .product-card:hover{border-color:var(--text);}
+  .product-tile{position:relative; overflow:hidden; aspect-ratio:4/5;}
+  .product-tile svg{transition:transform .5s cubic-bezier(.2,.8,.2,1);}
+  .product-card:hover .product-tile svg{transform:scale(1.06) translateY(-2px);}
+  .qv-btn{opacity:0; transform:translateY(6px); transition:opacity .2s ease, transform .2s ease;}
+  .product-card:hover .qv-btn{opacity:1; transform:translateY(0);}
+
+  .star{width:14px; height:14px;}
+
+  .modal-overlay{position:fixed; inset:0; background:rgba(20,18,12,.55); z-index:60; display:flex; align-items:center; justify-content:center; padding:1rem; opacity:0; pointer-events:none; transition:opacity .22s ease;}
+  .modal-overlay.open{opacity:1; pointer-events:auto;}
+  .modal-panel{background:var(--surface); max-width:860px; width:100%; max-height:88vh; overflow:auto; border-radius:.5rem; transform:translateY(14px) scale(.98); transition:transform .25s cubic-bezier(.2,.8,.2,1);}
+  .modal-overlay.open .modal-panel{transform:translateY(0) scale(1);}
+
+  .drawer{position:fixed; top:0; right:0; height:100%; width:min(420px,100%); background:var(--surface); z-index:70; transform:translateX(100%); transition:transform .3s cubic-bezier(.2,.8,.2,1); display:flex; flex-direction:column; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);}
+  .drawer.open{transform:translateX(0);}
+  .drawer-overlay{position:fixed; inset:0; background:rgba(20,18,12,.5); z-index:65; opacity:0; pointer-events:none; transition:opacity .25s ease;}
+  .drawer-overlay.open{opacity:1; pointer-events:auto;}
+
+  .swatch{width:1.9rem; height:1.9rem; border-radius:999px; border:2px solid var(--border); cursor:pointer; transition:transform .15s ease, border-color .15s ease;}
+  .swatch[aria-pressed="true"]{border-color:var(--text); transform:scale(1.08);}
+  .size-opt{border:1px solid var(--border); border-radius:.3rem; min-width:2.6rem; height:2.6rem; display:flex; align-items:center; justify-content:center; font-size:.8rem; cursor:pointer; transition:all .15s ease;}
+  .size-opt[aria-pressed="true"]{background:var(--text); color:var(--bg); border-color:var(--text);}
+
+  .toast{position:fixed; bottom:calc(1.25rem + env(safe-area-inset-bottom,0px)); left:50%; transform:translateX(-50%) translateY(20px); background:var(--text); color:var(--bg); padding:.8rem 1.3rem; border-radius:.4rem; font-size:.85rem; z-index:80; opacity:0; pointer-events:none; transition:opacity .25s ease, transform .25s ease;}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  .badge-count{position:absolute; top:-6px; right:-6px; background:var(--accent); color:var(--on-accent); font-size:.65rem; font-weight:700; width:1.15rem; height:1.15rem; border-radius:999px; display:flex; align-items:center; justify-content:center;}
+
+  .qty-btn{width:2rem; height:2rem; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; border-radius:.3rem; transition:border-color .15s ease;}
+  .qty-btn:hover{border-color:var(--text);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001ms !important; transition-duration:.001ms !important;}
+  }
+</style>
+</head>
+<body class="antialiased">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<symbol id="ic-shirt" viewBox="0 0 100 100"><path d="M35 14 L20 24 L10 38 L22 48 L28 42 L28 88 L72 88 L72 42 L78 48 L90 38 L80 24 L65 14 L58 20 Q50 26 42 20 Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></symbol>
+<symbol id="ic-jacket" viewBox="0 0 100 100"><path d="M32 12 L18 20 L8 40 L20 48 L26 40 L24 90 L44 90 L44 50 L56 50 L56 90 L76 90 L74 40 L80 48 L92 40 L82 20 L68 12 L58 20 L50 30 L42 20 Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><line x1="50" y1="30" x2="50" y2="90" stroke="currentColor" stroke-width="2"/></symbol>
+<symbol id="ic-pants" viewBox="0 0 100 100"><path d="M28 10 L72 10 L74 40 L82 90 L64 90 L54 46 L50 46 L46 90 L28 90 L36 40 Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><line x1="28" y1="20" x2="72" y2="20" stroke="currentColor" stroke-width="2"/></symbol>
+<symbol id="ic-sweater" viewBox="0 0 100 100"><path d="M33 12 L18 22 L8 38 L20 48 L28 40 L28 88 L72 88 L72 40 L80 48 L92 38 L82 22 L67 12 L58 22 Q50 30 42 22 Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M36 30 Q50 38 64 30" fill="none" stroke="currentColor" stroke-width="2"/><path d="M32 50 L68 50 M32 62 L68 62 M32 74 L68 74" stroke="currentColor" stroke-width="1.4"/></symbol>
+<symbol id="ic-belt" viewBox="0 0 100 100"><rect x="8" y="42" width="84" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2.5"/><rect x="40" y="36" width="20" height="28" rx="2" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="50" cy="50" r="3" fill="currentColor"/></symbol>
+<symbol id="ic-shoe" viewBox="0 0 100 100"><path d="M10 70 Q10 58 24 56 L40 52 Q46 44 54 44 L58 52 Q72 52 82 62 Q92 70 92 76 L92 80 L10 80 Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><line x1="10" y1="76" x2="92" y2="76" stroke="currentColor" stroke-width="1.6"/></symbol>
+<symbol id="ic-truck" viewBox="0 0 48 48"><path d="M4 12h22v18H4z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M26 20h9l7 6v4h-16z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="13" cy="34" r="3.5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="35" cy="34" r="3.5" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+<symbol id="ic-headset" viewBox="0 0 48 48"><path d="M8 26v-3a16 16 0 0 1 32 0v3" fill="none" stroke="currentColor" stroke-width="2"/><rect x="6" y="24" width="7" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="35" y="24" width="7" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M42 36v2a6 6 0 0 1-6 6h-6" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+<symbol id="ic-shield" viewBox="0 0 48 48"><path d="M24 5 L40 11 V23 C40 33 33 40 24 43 C15 40 8 33 8 23 V11 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M17 24 L22 29 L32 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="ic-return" viewBox="0 0 48 48"><path d="M10 18 A14 14 0 1 1 8 28" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 10 L10 18 L18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+<symbol id="ic-star" viewBox="0 0 20 20"><path d="M10 1.5 L12.6 7 L18.5 7.7 L14 11.7 L15.3 17.6 L10 14.5 L4.7 17.6 L6 11.7 L1.5 7.7 L7.4 7 Z"/></symbol>
+<symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="16.2" y1="16.2" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+<symbol id="ic-bag" viewBox="0 0 24 24"><path d="M6 8h12l1 13H5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 8V6a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+<symbol id="ic-close" viewBox="0 0 24 24"><line x1="5" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="19" y1="5" x2="5" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+<symbol id="ic-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+<symbol id="ic-minus" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+<symbol id="ic-trash" viewBox="0 0 24 24"><path d="M5 7h14M9 7V5h6v2M7 7l1 13h8l1-13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="ic-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="2"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22.5" y2="12"/><line x1="4.6" y1="4.6" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.4" y2="19.4"/><line x1="4.6" y1="19.4" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.4" y2="4.6"/></g></symbol>
+<symbol id="ic-moon" viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4 6.8 6.8 0 0 0 20 14.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+<symbol id="ic-menu" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="4" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="4" y1="17" x2="20" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+</defs>
+</svg>
+
+<!-- HEADER -->
+<header class="site-header border-b hairline">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[76px] flex items-center gap-4">
+    <button id="menuToggle" class="icon-btn md:hidden" aria-label="Abrir menú" aria-expanded="false">
+      <svg class="w-5 h-5"><use href="#ic-menu"/></svg>
+    </button>
+
+    <a href="#top" class="font-display text-2xl tracking-tight shrink-0" style="letter-spacing:-.02em">GOLEN<span style="color:var(--accent)">S</span></a>
+
+    <nav id="mainNav" class="hidden md:flex items-center gap-6 ml-4 text-sm" style="color:var(--muted)">
+      <button class="nav-cat hover:text-[var(--text)] transition-colors" data-cat="all">Todo</button>
+      <button class="nav-cat hover:text-[var(--text)] transition-colors" data-cat="Camisetas técnicas">Camisetas técnicas</button>
+      <button class="nav-cat hover:text-[var(--text)] transition-colors" data-cat="Mallas">Mallas</button>
+      <button class="nav-cat hover:text-[var(--text)] transition-colors" data-cat="Chaquetas técnicas">Chaquetas técnicas</button>
+      <button class="nav-cat hover:text-[var(--text)] transition-colors" data-cat="Sudaderas">Sudaderas</button>
+      <button class="nav-cat hover:text-[var(--text)] transition-colors" data-cat="Accesorios">Accesorios</button>
+    </nav>
+
+    <div class="flex-1 flex justify-end items-center gap-2">
+      <div class="relative w-full max-w-[220px] sm:max-w-xs">
+        <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2" style="color:var(--muted)"><use href="#ic-search"/></svg>
+        <input id="searchInput" type="search" placeholder="Buscar productos…" aria-label="Buscar productos"
+          class="w-full pl-9 pr-3 py-2 text-sm rounded-full border hairline bg-transparent focus:outline-none focus:border-[var(--text)] transition-colors" style="background:var(--surface)">
+      </div>
+      <button id="themeToggle" class="icon-btn" aria-label="Cambiar tema claro/oscuro">
+        <svg class="w-5 h-5" id="themeIconSun"><use href="#ic-sun"/></svg>
+        <svg class="w-5 h-5 hidden" id="themeIconMoon"><use href="#ic-moon"/></svg>
+      </button>
+      <button id="cartToggle" class="icon-btn relative" aria-label="Abrir carrito">
+        <svg class="w-5 h-5"><use href="#ic-bag"/></svg>
+        <span id="cartCount" class="badge-count hidden">0</span>
+      </button>
+    </div>
+  </div>
+  <nav id="mobileNav" class="md:hidden hidden border-t hairline px-4 py-3 flex flex-wrap gap-2 text-sm">
+    <button class="nav-cat pill" aria-pressed="true" data-cat="all">Todo</button>
+    <button class="nav-cat pill" data-cat="Camisetas técnicas">Camisetas técnicas</button>
+    <button class="nav-cat pill" data-cat="Mallas">Mallas</button>
+    <button class="nav-cat pill" data-cat="Chaquetas técnicas">Chaquetas técnicas</button>
+    <button class="nav-cat pill" data-cat="Sudaderas">Sudaderas</button>
+    <button class="nav-cat pill" data-cat="Accesorios">Accesorios</button>
+  </nav>
+</header>
+
+<main id="top">
+  <!-- HERO -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-16 lg:pt-20 lg:pb-24 grid lg:grid-cols-[1.1fr_.9fr] gap-10 items-center">
+    <div>
+      <p class="text-sm tracking-wide mb-5" style="color:var(--accent-strong)">Colección de entreno — tejidos técnicos</p>
+      <h1 class="font-display text-[2.6rem] leading-[1.05] sm:text-6xl sm:leading-[1.03] mb-6" style="letter-spacing:-.01em">
+        Tu esfuerzo y tu estilo, reflejados en cada prenda.
+      </h1>
+      <p class="max-w-md text-base leading-relaxed mb-8" style="color:var(--muted)">
+        Golens diseña equipación técnica con tejidos transpirables y ajuste pensado para el rendimiento. Sin ruido, sin tendencias pasajeras.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <a href="#catalogo" class="btn-primary">Ver colección</a>
+        <a href="#beneficios" class="btn-outline">Cómo trabajamos</a>
+      </div>
+    </div>
+    <div class="relative aspect-[4/5] rounded-sm border hairline flex items-center justify-center" style="background:var(--tile-1)">
+      <svg viewBox="0 0 100 100" class="w-2/3 h-2/3" style="color:var(--accent-strong)"><use href="#ic-jacket"/></svg>
+      <div class="absolute bottom-5 left-5 right-5 flex items-center justify-between text-xs px-4 py-3 rounded-sm border hairline" style="background:var(--surface)">
+        <span style="color:var(--muted)">Cortavientos Trail Bronce</span>
+        <span class="font-semibold">109 €</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- BENEFICIOS -->
+  <section id="beneficios" class="border-y hairline" style="background:var(--surface)">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-0 sm:divide-x hairline">
+      <div class="flex items-center gap-3 sm:px-6">
+        <svg class="w-7 h-7 shrink-0" style="color:var(--accent)"><use href="#ic-truck"/></svg>
+        <div><p class="text-sm font-semibold">Envío gratis</p><p class="text-xs" style="color:var(--muted)">Pedidos +60 €</p></div>
+      </div>
+      <div class="flex items-center gap-3 sm:px-6">
+        <svg class="w-7 h-7 shrink-0" style="color:var(--accent)"><use href="#ic-headset"/></svg>
+        <div><p class="text-sm font-semibold">Soporte 24/7</p><p class="text-xs" style="color:var(--muted)">Siempre disponibles</p></div>
+      </div>
+      <div class="flex items-center gap-3 sm:px-6">
+        <svg class="w-7 h-7 shrink-0" style="color:var(--accent)"><use href="#ic-shield"/></svg>
+        <div><p class="text-sm font-semibold">Pago seguro</p><p class="text-xs" style="color:var(--muted)">Cifrado end-to-end</p></div>
+      </div>
+      <div class="flex items-center gap-3 sm:px-6">
+        <svg class="w-7 h-7 shrink-0" style="color:var(--accent)"><use href="#ic-return"/></svg>
+        <div><p class="text-sm font-semibold">Devolución fácil</p><p class="text-xs" style="color:var(--muted)">30 días naturales</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATALOGO -->
+  <section id="catalogo" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+      <div>
+        <h2 class="font-display text-3xl mb-1">Catálogo</h2>
+        <p class="text-sm" style="color:var(--muted)"><span id="resultsCount">0</span> productos</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <label for="sortSelect" class="text-sm" style="color:var(--muted)">Ordenar</label>
+        <select id="sortSelect" class="text-sm border hairline rounded-sm px-3 py-2 bg-transparent focus:outline-none focus:border-[var(--text)]" style="background:var(--surface)">
+          <option value="relevance">Relevancia</option>
+          <option value="price-asc">Precio: menor a mayor</option>
+          <option value="price-desc">Precio: mayor a menor</option>
+          <option value="rating-desc">Mejor valorados</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="categoryPills" class="hidden sm:flex flex-wrap gap-2 mb-8">
+      <button class="pill" aria-pressed="true" data-cat="all">Todo</button>
+      <button class="pill" data-cat="Camisetas técnicas">Camisetas técnicas</button>
+      <button class="pill" data-cat="Mallas">Mallas</button>
+      <button class="pill" data-cat="Chaquetas técnicas">Chaquetas técnicas</button>
+      <button class="pill" data-cat="Sudaderas">Sudaderas</button>
+      <button class="pill" data-cat="Accesorios">Accesorios</button>
+      <button class="pill" data-cat="Calzado">Calzado</button>
+    </div>
+
+    <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6"></div>
+    <p id="emptyState" class="hidden text-center py-16 text-sm" style="color:var(--muted)">No se han encontrado productos con esos filtros.</p>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section class="border-t hairline" style="background:var(--surface)">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 grid md:grid-cols-2 gap-6 items-center">
+      <div>
+        <h2 class="font-display text-2xl mb-2">Únete a la lista</h2>
+        <p class="text-sm" style="color:var(--muted)">Novedades de colección y acceso anticipado a reposiciones. Sin spam.</p>
+      </div>
+      <form id="newsletterForm" class="flex flex-col sm:flex-row gap-3">
+        <label for="newsletterEmail" class="sr-only">Correo electrónico</label>
+        <input id="newsletterEmail" type="email" required placeholder="tu@email.com"
+          class="flex-1 px-4 py-3 text-sm border hairline rounded-sm bg-transparent focus:outline-none focus:border-[var(--text)]" style="background:var(--bg)">
+        <button type="submit" class="btn-primary shrink-0">Suscribirme</button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer class="border-t hairline">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
+    <div>
+      <p class="font-display text-xl mb-3">GOLEN<span style="color:var(--accent)">S</span></p>
+      <p class="text-sm leading-relaxed mb-5" style="color:var(--muted)">Ropa deportiva diseñada en Madrid. Tejidos técnicos y ajuste pensado para moverte.</p>
+      <div class="flex gap-2">
+        <a href="#" aria-label="Instagram" class="icon-btn border hairline">IG</a>
+        <a href="#" aria-label="TikTok" class="icon-btn border hairline">TT</a>
+        <a href="#" aria-label="Pinterest" class="icon-btn border hairline">PT</a>
+        <a href="#" aria-label="X" class="icon-btn border hairline">X</a>
+      </div>
+    </div>
+    <div>
+      <p class="text-sm font-semibold mb-4">Ayuda</p>
+      <ul class="space-y-2.5 text-sm" style="color:var(--muted)">
+        <li><a href="#" class="hover:text-[var(--text)]">Política de privacidad</a></li>
+        <li><a href="#" class="hover:text-[var(--text)]">Términos y condiciones</a></li>
+        <li><a href="#" class="hover:text-[var(--text)]">Envíos y devoluciones</a></li>
+        <li><a href="#" class="hover:text-[var(--text)]">Guía de tallas</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="text-sm font-semibold mb-4">Tienda</p>
+      <ul class="space-y-2.5 text-sm" style="color:var(--muted)">
+        <li><a href="#catalogo" class="hover:text-[var(--text)]">Novedades</a></li>
+        <li><a href="#catalogo" class="hover:text-[var(--text)]">Más vendidos</a></li>
+        <li><a href="#" class="hover:text-[var(--text)]">Sobre nosotros</a></li>
+        <li><a href="#" class="hover:text-[var(--text)]">Contacto</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="text-sm font-semibold mb-4">Métodos de pago</p>
+      <div class="flex flex-wrap gap-2">
+        <span class="text-xs border hairline rounded-sm px-2.5 py-1.5" style="color:var(--muted)">Visa</span>
+        <span class="text-xs border hairline rounded-sm px-2.5 py-1.5" style="color:var(--muted)">Mastercard</span>
+        <span class="text-xs border hairline rounded-sm px-2.5 py-1.5" style="color:var(--muted)">PayPal</span>
+        <span class="text-xs border hairline rounded-sm px-2.5 py-1.5" style="color:var(--muted)">Apple Pay</span>
+        <span class="text-xs border hairline rounded-sm px-2.5 py-1.5" style="color:var(--muted)">Bizum</span>
+      </div>
+    </div>
+  </div>
+  <div class="border-t hairline">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 text-xs flex flex-col sm:flex-row justify-between gap-2" style="color:var(--muted)">
+      <p>© 2026 Golens. Todos los derechos reservados.</p>
+      <p>Datos de producto simulados con fines de demostración.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- PRODUCT MODAL -->
+<div id="modalOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-panel">
+    <div id="modalContent" class="grid sm:grid-cols-2"></div>
+  </div>
+</div>
+
+<!-- CART DRAWER -->
+<div id="drawerOverlay" class="drawer-overlay"></div>
+<aside id="cartDrawer" class="drawer" aria-label="Carrito de compra">
+  <div class="flex items-center justify-between px-5 py-4 border-b hairline">
+    <h2 class="font-display text-xl">Tu carrito</h2>
+    <button id="closeDrawer" class="icon-btn" aria-label="Cerrar carrito"><svg class="w-5 h-5"><use href="#ic-close"/></svg></button>
+  </div>
+  <div id="cartItems" class="flex-1 overflow-y-auto px-5 py-4 space-y-4"></div>
+  <p id="cartEmptyMsg" class="hidden text-center text-sm py-10 px-5" style="color:var(--muted)">Tu carrito está vacío. Añade alguna pieza de la colección.</p>
+  <div id="cartFooter" class="border-t hairline px-5 py-5 space-y-3">
+    <div class="flex justify-between text-sm"><span style="color:var(--muted)">Subtotal</span><span id="cartSubtotal">0,00 €</span></div>
+    <div class="flex justify-between text-sm"><span style="color:var(--muted)">Envío</span><span id="cartShipping">Gratis</span></div>
+    <div class="flex justify-between font-semibold text-base pt-2 border-t hairline"><span>Total</span><span id="cartTotal">0,00 €</span></div>
+    <button id="checkoutBtn" class="btn-primary w-full mt-2">Proceder al pago</button>
+  </div>
+</aside>
+
+<div id="toast" class="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- Mock data ---------- */
+  const PRODUCTS = [
+    {id:1, name:"Camiseta Técnica Running Ónix", category:"Camisetas técnicas", price:29, rating:4.6, reviews:128, icon:"ic-shirt", tone:1,
+      desc:"Camiseta técnica con tejido transpirable de secado rápido y costuras planas antirroce. Corte regular fit.",
+      sizes:["S","M","L","XL"], colors:[{n:"Ónix",h:"#211E19"},{n:"Blanco",h:"#E9E2CE"},{n:"Verde caza",h:"#4C5A45"}]},
+    {id:2, name:"Camiseta Compresión Arena", category:"Camisetas técnicas", price:32, rating:4.4, reviews:76, icon:"ic-shirt", tone:2,
+      desc:"Camiseta de compresión ligera con tejido elástico 4 vías. Sujeción muscular para entrenos de intensidad.",
+      sizes:["S","M","L","XL"], colors:[{n:"Arena",h:"#D8C9A6"},{n:"Ónix",h:"#211E19"}]},
+    {id:3, name:"Camiseta Térmica Trail Ecru", category:"Camisetas técnicas", price:38, rating:4.8, reviews:203, icon:"ic-shirt", tone:3,
+      desc:"Camiseta de manga larga con tejido térmico transpirable y tratamiento antiolor. Pensada para trail y frío seco.",
+      sizes:["S","M","L","XL"], colors:[{n:"Ecru",h:"#EFE7D2"},{n:"Azul cielo",h:"#9CB4C4"}]},
+    {id:4, name:"Malla Running 7/8 Arena", category:"Mallas", price:49, rating:4.5, reviews:154, icon:"ic-pants", tone:2,
+      desc:"Malla deportiva 7/8 en tejido elástico con cintura ancha y bolsillo trasero para móvil.",
+      sizes:["XS","S","M","L","XL"], colors:[{n:"Arena",h:"#D8C9A6"},{n:"Verde caza",h:"#4C5A45"},{n:"Ónix",h:"#211E19"}]},
+    {id:5, name:"Malla Compresión Índigo", category:"Mallas", price:44, rating:4.7, reviews:189, icon:"ic-pants", tone:1,
+      desc:"Malla larga de compresión con panel de sujeción en la zona lumbar y tejido de secado rápido.",
+      sizes:["XS","S","M","L","XL"], colors:[{n:"Índigo",h:"#33455B"},{n:"Negro",h:"#211E19"}]},
+    {id:6, name:"Jogger Entreno Bronce", category:"Mallas", price:54, rating:4.3, reviews:58, icon:"ic-pants", tone:4,
+      desc:"Jogger de tejido técnico ligero con puños elásticos y bolsillos con cremallera para entrenos y calle.",
+      sizes:["S","M","L","XL"], colors:[{n:"Bronce",h:"#8A6A3C"},{n:"Ónix",h:"#211E19"}]},
+    {id:7, name:"Cortavientos Trail Bronce", category:"Chaquetas técnicas", price:109, rating:4.9, reviews:97, icon:"ic-jacket", tone:1,
+      desc:"Cortavientos ultraligero plegable, cortavientos y repelente al agua. Capucha ajustable y bolsillo estanco.",
+      sizes:["S","M","L","XL"], colors:[{n:"Bronce",h:"#8A6A3C"},{n:"Verde caza",h:"#4C5A45"}]},
+    {id:8, name:"Chaqueta Softshell Musgo", category:"Chaquetas técnicas", price:129, rating:4.6, reviews:64, icon:"ic-jacket", tone:3,
+      desc:"Softshell cortaviento y transpirable con forro interior de micropolar. Cuello alto y puños elásticos.",
+      sizes:["S","M","L","XL"], colors:[{n:"Musgo",h:"#4C5A45"},{n:"Ónix",h:"#211E19"}]},
+    {id:9, name:"Chaqueta Térmica Running Ecru", category:"Chaquetas técnicas", price:95, rating:4.7, reviews:41, icon:"ic-jacket", tone:2,
+      desc:"Chaqueta térmica para correr con paneles reflectantes, cremallera de ventilación y bolsillo trasero.",
+      sizes:["S","M","L","XL"], colors:[{n:"Ecru",h:"#EFE7D2"},{n:"Bronce",h:"#8A6A3C"}]},
+    {id:10, name:"Sudadera Capucha Entreno Musgo", category:"Sudaderas", price:59, rating:4.5, reviews:88, icon:"ic-sweater", tone:4,
+      desc:"Sudadera con capucha en felpa técnica transpirable. Bolsillo canguro y puños y bajo acanalados.",
+      sizes:["S","M","L","XL"], colors:[{n:"Musgo",h:"#4C5A45"},{n:"Blanco",h:"#E9E2CE"},{n:"Burdeos",h:"#6B3A3A"}]},
+    {id:11, name:"Sudadera Cuello Redondo Bronce", category:"Sudaderas", price:52, rating:4.4, reviews:52, icon:"ic-sweater", tone:1,
+      desc:"Sudadera de algodón perchado con cuello redondo reforzado. Corte relajado para calentar antes o después del entreno.",
+      sizes:["S","M","L","XL"], colors:[{n:"Bronce",h:"#8A6A3C"},{n:"Ónix",h:"#211E19"}]},
+    {id:12, name:"Sudadera Media Cremallera Ónix", category:"Sudaderas", price:64, rating:4.6, reviews:73, icon:"ic-sweater", tone:3,
+      desc:"Sudadera técnica con media cremallera y cuello alto, tejido con tacto suave y gran transpirabilidad.",
+      sizes:["S","M","L","XL"], colors:[{n:"Ónix",h:"#211E19"},{n:"Arena",h:"#D8C9A6"}]},
+    {id:13, name:"Cinturón Running Cognac", category:"Accesorios", price:24, rating:4.8, reviews:112, icon:"ic-belt", tone:2,
+      desc:"Cinturón porta-dorsal con bolsillos elásticos para geles y móvil. Ajustable y sin rebote al correr.",
+      sizes:["Única"], colors:[{n:"Cognac",h:"#8A5A34"},{n:"Ónix",h:"#211E19"}]},
+    {id:14, name:"Gorra Técnica Arena", category:"Accesorios", price:22, rating:4.2, reviews:39, icon:"ic-belt", tone:4,
+      desc:"Gorra ligera con tejido transpirable, banda antisudor y cierre trasero regulable.",
+      sizes:["Única"], colors:[{n:"Arena",h:"#D8C9A6"},{n:"Ónix",h:"#211E19"}]},
+    {id:15, name:"Zapatilla Running Blanco", category:"Calzado", price:99, rating:4.7, reviews:167, icon:"ic-shoe", tone:1,
+      desc:"Zapatilla de running con amortiguación reactiva y malla transpirable. Suela con tracción multiterreno.",
+      sizes:["40","41","42","43","44","45"], colors:[{n:"Blanco",h:"#EFE7D2"},{n:"Ónix",h:"#211E19"}]},
+    {id:16, name:"Zapatilla Trail Bronce", category:"Calzado", price:119, rating:4.6, reviews:54, icon:"ic-shoe", tone:3,
+      desc:"Zapatilla de trail con tacos de agarre, puntera reforzada y membrana resistente al agua.",
+      sizes:["40","41","42","43","44","45"], colors:[{n:"Bronce",h:"#8A6A3C"}]}
+  ];
+
+  const fmt = n => n.toLocaleString('es-ES',{minimumFractionDigits:2, maximumFractionDigits:2}) + ' €';
+
+  /* ---------- State ---------- */
+  let state = { search:"", category:"all", sort:"relevance" };
+  let cart = [];
+  try{ const saved = localStorage.getItem('realgolen_cart'); if(saved) cart = JSON.parse(saved); }catch(e){}
+
+  function saveCart(){ try{ localStorage.setItem('realgolen_cart', JSON.stringify(cart)); }catch(e){} }
+
+  /* ---------- Rendering: stars ---------- */
+  function starsMarkup(rating){
+    let html = '';
+    for(let i=1;i<=5;i++){
+      const filled = i <= Math.round(rating);
+      html += `<svg class="star" style="color:${filled ? 'var(--accent)' : 'var(--border)'}"><use href="#ic-star"/></svg>`;
+    }
+    return html;
+  }
+
+  /* ---------- Rendering: product grid ---------- */
+  const grid = document.getElementById('productGrid');
+  const emptyState = document.getElementById('emptyState');
+  const resultsCount = document.getElementById('resultsCount');
+
+  function getFiltered(){
+    let list = PRODUCTS.filter(p=>{
+      const matchCat = state.category === 'all' || p.category === state.category;
+      const q = state.search.trim().toLowerCase();
+      const matchSearch = !q || p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q);
+      return matchCat && matchSearch;
+    });
+    if(state.sort === 'price-asc') list = list.slice().sort((a,b)=>a.price-b.price);
+    if(state.sort === 'price-desc') list = list.slice().sort((a,b)=>b.price-a.price);
+    if(state.sort === 'rating-desc') list = list.slice().sort((a,b)=>b.rating-a.rating);
+    return list;
+  }
+
+  function renderGrid(){
+    const list = getFiltered();
+    resultsCount.textContent = list.length;
+    grid.innerHTML = '';
+    emptyState.classList.toggle('hidden', list.length !== 0);
+    list.forEach(p=>{
+      const card = document.createElement('article');
+      card.className = 'product-card group flex flex-col';
+      card.innerHTML = `
+        <button class="product-tile w-full text-left" style="background:var(--tile-${p.tone})" data-open="${p.id}" aria-label="Ver detalles de ${p.name}">
+          <svg viewBox="0 0 100 100" class="absolute inset-0 m-auto w-[58%] h-[58%]" style="color:var(--accent-strong)"><use href="#${p.icon}"/></svg>
+          <span class="qv-btn absolute bottom-3 left-3 right-3 text-center text-xs font-semibold py-2 rounded-sm" style="background:var(--surface); border:1px solid var(--border)">Vista rápida</span>
+        </button>
+        <div class="pt-3 flex flex-col gap-1 flex-1">
+          <p class="text-[.7rem] uppercase tracking-wide" style="color:var(--muted)">${p.category}</p>
+          <button class="text-sm font-medium text-left leading-snug hover:underline" data-open="${p.id}">${p.name}</button>
+          <div class="flex items-center gap-1 my-0.5">${starsMarkup(p.rating)}<span class="text-[.7rem] ml-1" style="color:var(--muted)">(${p.reviews})</span></div>
+          <div class="mt-auto flex items-center justify-between pt-2">
+            <span class="font-semibold text-sm">${fmt(p.price)}</span>
+            <button class="text-xs font-semibold px-3 py-1.5 rounded-sm border hairline hover:bg-[var(--text)] hover:text-[var(--bg)] transition-colors" data-quickadd="${p.id}">Añadir</button>
+          </div>
+        </div>`;
+      grid.appendChild(card);
+    });
+  }
+
+  grid.addEventListener('click', e=>{
+    const openBtn = e.target.closest('[data-open]');
+    if(openBtn){ openModal(Number(openBtn.dataset.open)); return; }
+    const addBtn = e.target.closest('[data-quickadd]');
+    if(addBtn){
+      const p = PRODUCTS.find(x=>x.id === Number(addBtn.dataset.quickadd));
+      addToCart(p, p.sizes[0], p.colors[0].n, 1);
+    }
+  });
+
+  /* ---------- Filters ---------- */
+  document.getElementById('searchInput').addEventListener('input', e=>{ state.search = e.target.value; renderGrid(); });
+  document.getElementById('sortSelect').addEventListener('change', e=>{ state.sort = e.target.value; renderGrid(); });
+
+  function setActiveCategory(cat){
+    state.category = cat;
+    document.querySelectorAll('.nav-cat, #categoryPills .pill').forEach(btn=>{
+      btn.setAttribute('aria-pressed', btn.dataset.cat === cat ? 'true' : 'false');
+    });
+    renderGrid();
+  }
+  document.querySelectorAll('.nav-cat, #categoryPills .pill').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      setActiveCategory(btn.dataset.cat);
+      document.getElementById('catalogo').scrollIntoView({behavior:'smooth'});
+      mobileNav.classList.add('hidden');
+    });
+  });
+
+  /* mobile menu */
+  const menuToggle = document.getElementById('menuToggle');
+  const mobileNav = document.getElementById('mobileNav');
+  menuToggle.addEventListener('click', ()=>{
+    const isHidden = mobileNav.classList.contains('hidden');
+    mobileNav.classList.toggle('hidden');
+    menuToggle.setAttribute('aria-expanded', String(isHidden));
+  });
+
+  /* ---------- Modal ---------- */
+  const modalOverlay = document.getElementById('modalOverlay');
+  const modalContent = document.getElementById('modalContent');
+  let modalState = null;
+
+  function openModal(id){
+    const p = PRODUCTS.find(x=>x.id === id);
+    modalState = { product:p, size:p.sizes[0], color:p.colors[0].n, qty:1 };
+    renderModal();
+    modalOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(){
+    modalOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  modalOverlay.addEventListener('click', e=>{ if(e.target === modalOverlay) closeModal(); });
+  document.addEventListener('keydown', e=>{ if(e.key === 'Escape'){ closeModal(); closeDrawerFn(); } });
+
+  function renderModal(){
+    const { product:p, size, color, qty } = modalState;
+    modalContent.innerHTML = `
+      <div class="flex items-center justify-center p-10" style="background:var(--tile-${p.tone})">
+        <svg viewBox="0 0 100 100" class="w-2/3 h-2/3" style="color:var(--accent-strong)"><use href="#${p.icon}"/></svg>
+      </div>
+      <div class="p-6 sm:p-8 relative">
+        <button id="modalClose" class="icon-btn absolute right-4 top-4" aria-label="Cerrar"><svg class="w-5 h-5"><use href="#ic-close"/></svg></button>
+        <p class="text-[.7rem] uppercase tracking-wide mb-1" style="color:var(--muted)">${p.category}</p>
+        <h2 id="modalTitle" class="font-display text-2xl mb-2 pr-8">${p.name}</h2>
+        <div class="flex items-center gap-1 mb-3">${starsMarkup(p.rating)}<span class="text-xs ml-1" style="color:var(--muted)">${p.rating.toFixed(1)} · ${p.reviews} reseñas</span></div>
+        <p class="text-lg font-semibold mb-4">${fmt(p.price)}</p>
+        <p class="text-sm leading-relaxed mb-6" style="color:var(--muted)">${p.desc}</p>
+
+        <div class="mb-5">
+          <p class="text-xs font-semibold mb-2">Color: <span style="color:var(--muted); font-weight:400">${color}</span></p>
+          <div class="flex gap-2" id="colorOpts">
+            ${p.colors.map(c=>`<button class="swatch" style="background:${c.h}" data-color="${c.n}" aria-pressed="${c.n===color}" aria-label="${c.n}" title="${c.n}"></button>`).join('')}
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <p class="text-xs font-semibold mb-2">Talla</p>
+          <div class="flex flex-wrap gap-2" id="sizeOpts">
+            ${p.sizes.map(s=>`<button class="size-opt" data-size="${s}" aria-pressed="${s===size}">${s}</button>`).join('')}
+          </div>
+        </div>
+
+        <div class="flex items-center gap-4 mb-6">
+          <p class="text-xs font-semibold">Cantidad</p>
+          <div class="flex items-center gap-2">
+            <button class="qty-btn" id="qtyMinus" aria-label="Reducir cantidad"><svg class="w-3.5 h-3.5"><use href="#ic-minus"/></svg></button>
+            <span id="qtyVal" class="w-6 text-center text-sm">${qty}</span>
+            <button class="qty-btn" id="qtyPlus" aria-label="Aumentar cantidad"><svg class="w-3.5 h-3.5"><use href="#ic-plus"/></svg></button>
+          </div>
+        </div>
+
+        <button id="modalAddToCart" class="btn-primary w-full">Añadir al carrito — ${fmt(p.price*qty)}</button>
+      </div>`;
+
+    document.getElementById('modalClose').addEventListener('click', closeModal);
+    modalContent.querySelectorAll('[data-color]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{ modalState.color = btn.dataset.color; renderModal(); });
+    });
+    modalContent.querySelectorAll('[data-size]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{ modalState.size = btn.dataset.size; renderModal(); });
+    });
+    document.getElementById('qtyMinus').addEventListener('click', ()=>{ modalState.qty = Math.max(1, modalState.qty-1); renderModal(); });
+    document.getElementById('qtyPlus').addEventListener('click', ()=>{ modalState.qty = Math.min(10, modalState.qty+1); renderModal(); });
+    document.getElementById('modalAddToCart').addEventListener('click', ()=>{
+      addToCart(p, modalState.size, modalState.color, modalState.qty);
+      closeModal();
+    });
+  }
+
+  /* ---------- Cart ---------- */
+  const cartDrawer = document.getElementById('cartDrawer');
+  const drawerOverlay = document.getElementById('drawerOverlay');
+  const cartItemsEl = document.getElementById('cartItems');
+  const cartEmptyMsg = document.getElementById('cartEmptyMsg');
+  const cartFooter = document.getElementById('cartFooter');
+  const cartCount = document.getElementById('cartCount');
+
+  function addToCart(product, size, color, qty){
+    const key = `${product.id}-${size}-${color}`;
+    const existing = cart.find(i=>i.key === key);
+    if(existing){ existing.qty = Math.min(10, existing.qty + qty); }
+    else{ cart.push({ key, id:product.id, name:product.name, price:product.price, icon:product.icon, tone:product.tone, size, color, qty }); }
+    saveCart();
+    renderCart();
+    showToast(`${product.name} añadido al carrito`);
+    openDrawer();
+  }
+
+  function updateQty(key, delta){
+    const item = cart.find(i=>i.key === key);
+    if(!item) return;
+    item.qty += delta;
+    if(item.qty <= 0) cart = cart.filter(i=>i.key !== key);
+    saveCart();
+    renderCart();
+  }
+  function removeItem(key){
+    cart = cart.filter(i=>i.key !== key);
+    saveCart();
+    renderCart();
+  }
+
+  function renderCart(){
+    const totalItems = cart.reduce((s,i)=>s+i.qty,0);
+    cartCount.textContent = totalItems;
+    cartCount.classList.toggle('hidden', totalItems === 0);
+
+    cartItemsEl.innerHTML = '';
+    const isEmpty = cart.length === 0;
+    cartEmptyMsg.classList.toggle('hidden', !isEmpty);
+    cartFooter.classList.toggle('hidden', isEmpty);
+
+    cart.forEach(item=>{
+      const row = document.createElement('div');
+      row.className = 'flex gap-3';
+      row.innerHTML = `
+        <div class="w-20 h-24 shrink-0 flex items-center justify-center rounded-sm" style="background:var(--tile-${item.tone})">
+          <svg viewBox="0 0 100 100" class="w-3/5 h-3/5" style="color:var(--accent-strong)"><use href="#${item.icon}"/></svg>
+        </div>
+        <div class="flex-1 flex flex-col">
+          <div class="flex justify-between gap-2">
+            <p class="text-sm font-medium leading-snug">${item.name}</p>
+            <button class="icon-btn w-7 h-7 shrink-0" aria-label="Eliminar ${item.name}" data-remove="${item.key}"><svg class="w-4 h-4"><use href="#ic-trash"/></svg></button>
+          </div>
+          <p class="text-xs mt-0.5" style="color:var(--muted)">Talla ${item.size} · ${item.color}</p>
+          <div class="flex items-center justify-between mt-auto pt-2">
+            <div class="flex items-center gap-2">
+              <button class="qty-btn" data-dec="${item.key}" aria-label="Reducir"><svg class="w-3.5 h-3.5"><use href="#ic-minus"/></svg></button>
+              <span class="w-5 text-center text-sm">${item.qty}</span>
+              <button class="qty-btn" data-inc="${item.key}" aria-label="Aumentar"><svg class="w-3.5 h-3.5"><use href="#ic-plus"/></svg></button>
+            </div>
+            <span class="text-sm font-semibold">${fmt(item.price*item.qty)}</span>
+          </div>
+        </div>`;
+      cartItemsEl.appendChild(row);
+    });
+
+    const subtotal = cart.reduce((s,i)=>s+i.price*i.qty,0);
+    document.getElementById('cartSubtotal').textContent = fmt(subtotal);
+    document.getElementById('cartTotal').textContent = fmt(subtotal);
+  }
+
+  cartItemsEl.addEventListener('click', e=>{
+    const inc = e.target.closest('[data-inc]'); if(inc){ updateQty(inc.dataset.inc, 1); return; }
+    const dec = e.target.closest('[data-dec]'); if(dec){ updateQty(dec.dataset.dec, -1); return; }
+    const rem = e.target.closest('[data-remove]'); if(rem){ removeItem(rem.dataset.remove); }
+  });
+
+  function openDrawer(){
+    cartDrawer.classList.add('open');
+    drawerOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDrawerFn(){
+    cartDrawer.classList.remove('open');
+    drawerOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('cartToggle').addEventListener('click', openDrawer);
+  document.getElementById('closeDrawer').addEventListener('click', closeDrawerFn);
+  drawerOverlay.addEventListener('click', closeDrawerFn);
+
+  document.getElementById('checkoutBtn').addEventListener('click', ()=>{
+    if(cart.length === 0) return;
+    showToast('Pedido simulado realizado. ¡Gracias por tu compra!');
+    cart = [];
+    saveCart();
+    renderCart();
+    setTimeout(closeDrawerFn, 900);
+  });
+
+  /* ---------- Newsletter ---------- */
+  document.getElementById('newsletterForm').addEventListener('submit', e=>{
+    e.preventDefault();
+    showToast('¡Gracias por suscribirte!');
+    e.target.reset();
+  });
+
+  /* ---------- Toast ---------- */
+  let toastTimer;
+  function showToast(msg){
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>toast.classList.remove('show'), 2600);
+  }
+
+  /* ---------- Theme ---------- */
+  const themeToggle = document.getElementById('themeToggle');
+  const sunIcon = document.getElementById('themeIconSun');
+  const moonIcon = document.getElementById('themeIconMoon');
+  function applyTheme(t){
+    if(t) document.documentElement.setAttribute('data-theme', t);
+    else document.documentElement.removeAttribute('data-theme');
+    const dark = t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    sunIcon.classList.toggle('hidden', dark);
+    moonIcon.classList.toggle('hidden', !dark);
+  }
+  let savedTheme = null;
+  try{ savedTheme = localStorage.getItem('realgolen_theme'); }catch(e){}
+  applyTheme(savedTheme);
+  themeToggle.addEventListener('click', ()=>{
+    const current = document.documentElement.getAttribute('data-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    const next = current === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    try{ localStorage.setItem('realgolen_theme', next); }catch(e){}
+  });
+
+  /* ---------- Init ---------- */
+  renderGrid();
+  renderCart();
+})();
+</script>
+</body>
+</html>
